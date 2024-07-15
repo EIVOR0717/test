@@ -1,27 +1,37 @@
-name: Build
-
 on:
+  # Trigger analysis when pushing to your main branches, and when creating a pull request.
   push:
     branches:
       - main
+      - master
+      - develop
+      - 'releases/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
 
-
+name: Main Workflow
 jobs:
-  build:
-    name: Build and analyze
+  sonarqube:
     runs-on: ubuntu-latest
-    
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
+        fetch-depth: 0
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'  # Specify the Node.js version
+    - name: Install Dependencies
+      run: npm install
+    - name: Run SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v2.1.0  # Replace with the latest version if available
+      env:
+        SONAR_TOKEN: ${sqp_4b62985948bcbd07c0b31cf7835ea674830f1f80}
+        SONAR_HOST_URL: ${http://localhost:9000}
+      with:
+        args: >
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info  # Path to the lcov report
+          -Dsonar.projectKey=your_project_key  # Replace with your actual project key
+          -Dsonar.projectName=your_project_name  # Replace with your actual project name
+
