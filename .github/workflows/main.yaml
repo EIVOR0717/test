@@ -27,8 +27,8 @@ jobs:
     - name: Run SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@v2.1.0  # Replace with the latest version if available
       env:
-        SONAR_TOKEN: ${sqp_4b62985948bcbd07c0b31cf7835ea674830f1f80}
-        SONAR_HOST_URL: ${http://localhost:9000}
+        SONAR_TOKEN: sqp_4b62985948bcbd07c0b31cf7835ea674830f1f80
+        SONAR_HOST_URL: http://localhost:9000
       with:
         args: >
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info  # Path to the lcov report
